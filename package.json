@@ -29,5 +29,5 @@
     "typescript": "^4.8.4"
   },
   "author": "Curry Tang <twn39@163.com>",
-  "license": "ISC"
+  "license": "MIT"
 }
