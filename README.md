@@ -14,7 +14,7 @@ Usage
 Creating a container is a matter of creating a ``Container`` instance:
 
 ```ts
-import {Container} from '@twn39@juice'
+import {Container} from '@twn39/juice'
 
 const container = new Container();
 ```

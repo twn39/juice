@@ -1,6 +1,6 @@
 {
   "name": "@twn39/juice",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Juice is a small Dependency Injection Container for typescript and javascript, inspired by Pimple.",
   "main": "dist/index.js",
   "homepage": "https://github.com/twn39/juice",

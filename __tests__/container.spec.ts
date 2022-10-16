@@ -1,6 +1,5 @@
 import {describe, expect, test} from '@jest/globals';
-import {Container} from "../src";
-import {FrozenServiceError, UnknownIdentifierError} from "../src/errors";
+import {Container, FrozenServiceError, UnknownIdentifierError} from "../src";
 
 class Student {
   public name: string

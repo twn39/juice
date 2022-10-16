@@ -1,15 +1,20 @@
-import {
-  ExpectedCallableError,
-  FrozenServiceError,
-  InvalidServiceIdentifierError,
-  ProtectedServiceError,
-  UnknownIdentifierError,
-} from "./errors";
-import {IServiceProvider} from "./IServiceProvider";
+export interface IServiceProvider {
+  register(container: Container): Container;
+}
 
 export type ID = string | symbol;
 
 export type ServiceCallable<T> = (c: Container) => T;
+
+export class FrozenServiceError extends Error {}
+
+export class UnknownIdentifierError extends Error {}
+
+export class ExpectedCallableError extends Error {}
+
+export class InvalidServiceIdentifierError extends Error {}
+
+export class ProtectedServiceError extends Error {}
 
 /**
  * Main di container class, make a container:
