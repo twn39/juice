@@ -63,6 +63,23 @@ describe('Container', () => {
     expect(kevin).not.toBe(tom);
   })
 
+  test('get raw service', () => {
+    const container = new Container();
+    expect(() => container.raw('logger')).toThrowError(UnknownIdentifierError);
+    container.set('logger', () => console.log);
+    const logger = container.get("logger");
+    expect(typeof logger).toBe('function');
+  })
+
+  test('delete service by identifier', () => {
+    const container = new Container();
+    expect(container.delete('logger')).toBeUndefined();
+    container.factory('student', () => new Student());
+    expect(container.get('student')).toBeInstanceOf(Student);
+    container.delete('student');
+    expect(() => container.get('student')).toThrowError(UnknownIdentifierError);
+  })
+
   test('extend the service', () => {
     const container = new Container();
     expect(() => container.extend<Student>('STUDENT', (student, container) => new Student())).toThrowError(UnknownIdentifierError)
