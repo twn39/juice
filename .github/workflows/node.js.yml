@@ -26,6 +26,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+    - run: curl -fsSL https://get.pnpm.io/install.sh | sh -
     - run: npm i -g pnpm
     - run: npm i
     - run: npm test
