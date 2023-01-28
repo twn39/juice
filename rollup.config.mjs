@@ -3,10 +3,10 @@ import typescript from '@rollup/plugin-typescript';
 import commonjs from '@rollup/plugin-commonjs';
 
 export default {
-  input: 'src/index.ts',
+  input: ['src/index.ts', "src/decorator.ts", "src/errors.ts"],
   output: [
     {
-      file: 'dist/index.js',
+      dir: "dist",
       format: 'cjs'
     }
   ],

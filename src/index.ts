@@ -1,3 +1,12 @@
+import {TokenMetaData} from "./decorator";
+import {
+  ExpectedCallableError,
+  FrozenServiceError,
+  InvalidServiceIdentifierError,
+  ProtectedServiceError,
+  UnknownIdentifierError
+} from "./errors";
+
 export interface IServiceProvider {
   register(container: Container): Container;
 }
@@ -6,15 +15,7 @@ export type ID = string | symbol;
 
 export type ServiceCallable<T> = (c: Container) => T;
 
-export class FrozenServiceError extends Error {}
-
-export class UnknownIdentifierError extends Error {}
-
-export class ExpectedCallableError extends Error {}
-
-export class InvalidServiceIdentifierError extends Error {}
-
-export class ProtectedServiceError extends Error {}
+export type Constructor<T = any> = new (...args: any[]) => T;
 
 /**
  * Main di container class, make a container:
@@ -58,11 +59,46 @@ export class Container {
   }
 
   /**
+   *
+   * container.bindValue<AppConfig>("app.config", new AppConfig())
+   *
+   * @param id
+   * @param target
+   */
+  public bindValue<T>(id: ID, target: T) {
+    this.set(id, () => target);
+  }
+
+  /**
+   * container.bindClass<HomeController>(HomeController);
+   * @param targetClass
+   */
+  public bindClass<T>(targetClass: Constructor<T>) {
+    const params = Reflect.getMetadata('design:paramtypes', targetClass);
+    let token = Reflect.getMetadata(TokenMetaData, targetClass);
+    if (token == null) {
+      token = targetClass.name;
+    }
+    if (params == null || params.length === 0) {
+      this.set(token, () => new targetClass());
+    } else {
+      const services = params.map((service: any) => {
+        let id = Reflect.getMetadata(TokenMetaData, service);
+        if (id == null) {
+          id = service.name;
+        }
+        return this.get(id);
+      })
+      this.set(token, () => new targetClass(...services));
+    }
+  }
+
+  /**
    * set service by identifier
    * @param id
    * @param value
    */
-  public set<T>(id: ID, value: T | ServiceCallable<T>) {
+  private set<T>(id: ID, value: T | ServiceCallable<T>) {
     if (this.frozen.has(id)) {
       throw new FrozenServiceError(`The service: ${String(id)} is frozen.`);
     }
@@ -71,10 +107,23 @@ export class Container {
   }
 
   /**
+   * container.fetch<HomeController>(HomeController);
+   * @param targetClass
+   */
+  public fetch<T>(targetClass: Constructor): T {
+    let token = Reflect.getMetadata(TokenMetaData, targetClass);
+    if (token == null) {
+      token = targetClass.name;
+    }
+
+    return this.get(token);
+  }
+
+  /**
    * get service by identifier
    * @param id
    */
-  public get<T>(id: ID): T {
+  private get<T>(id: ID): T {
     if (!this._keys.has(id)) {
       throw new UnknownIdentifierError(`Unknown service: ${String(id)}.`);
     }
